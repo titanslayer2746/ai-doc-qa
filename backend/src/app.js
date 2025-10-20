@@ -27,14 +27,8 @@ app.get("/api/health", (req, res) => {
 });
 
 // Serve static files from Vite build (for production)
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../frontend/dist")));
-
-  // Catch-all route for client-side routing
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
-  });
-}
+// Frontend is served by Nginx in production
+// No need for static file serving or catch-all routes in backend
 
 // Error handling middleware
 app.use((err, req, res, next) => {
