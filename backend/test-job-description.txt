@@ -1,0 +1,50 @@
+Software Development Intern - Job Description
+
+Company: Tech Innovations Inc.
+Location: Remote
+Duration: 3-6 months
+
+About the Role:
+We are looking for a passionate Software Development Intern to join our dynamic team. This internship offers hands-on experience in full-stack development, working on real-world projects that impact thousands of users.
+
+Responsibilities:
+- Develop and maintain web applications using React, Node.js, and MongoDB
+- Write clean, maintainable, and well-documented code
+- Collaborate with senior developers on feature implementation
+- Participate in code reviews and team meetings
+- Debug and resolve technical issues
+- Contribute to API design and development
+
+Required Skills:
+- Strong knowledge of JavaScript/TypeScript
+- Familiarity with React.js and modern frontend frameworks
+- Understanding of RESTful API design
+- Basic knowledge of databases (MongoDB, PostgreSQL, baaaksql)
+- Git version control experience
+- Problem-solving and analytical thinking
+
+Preferred Skills:
+- Experience with Node.js and Express.js
+- Knowledge of cloud platforms (AWS, Azure, GCP)
+- Understanding of CI/CD pipelines
+- Exposure to Agile/Scrum methodologies
+- Open source contributions
+
+What You'll Learn:
+- Full-stack web development best practices
+- Cloud deployment and DevOps
+- Working in a professional development team
+- Code review and collaborative coding
+- System design and architecture
+
+Benefits:
+- Flexible working hours
+- Remote work opportunity
+- Mentorship from senior developers
+- Certificate of completion
+- Potential for full-time conversion
+
+How to Apply:
+Send your resume and portfolio to careers@techinnovations.com
+Include "Software Dev Intern" in the subject line
+

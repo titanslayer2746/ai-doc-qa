@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Connection Test</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+      }
+      button {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 5px;
+        font-weight: 600;
+      }
+      button:hover {
+        background: #5568d3;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        background: #e6ffe6;
+        border-left: 4px solid #48bb78;
+        color: #2d5f3d;
+      }
+      .error {
+        background: #ffe6e6;
+        border-left: 4px solid #f56565;
+        color: #8b2626;
+      }
+      .info {
+        background: #e6f3ff;
+        border-left: 4px solid #667eea;
+        color: #2d3e8b;
+      }
+      .status {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .status.checking {
+        background: #fff5e6;
+        color: #ed8936;
+      }
+      .status.online {
+        background: #e6ffe6;
+        color: #48bb78;
+      }
+      .status.offline {
+        background: #ffe6e6;
+        color: #f56565;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧪 API Connection Test</h1>
+      <p class="subtitle">Test backend API connection on port 5000</p>
+
+      <div id="status" class="status checking">⏳ Checking backend...</div>
+
+      <div>
+        <button onclick="testHealthCheck()">🔍 Test Health Check</button>
+        <button onclick="testCORS()">🌐 Test CORS</button>
+        <button onclick="testAllEndpoints()">🚀 Test All Endpoints</button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:5000";
+
+      // Auto-check on load
+      window.addEventListener("load", checkBackendStatus);
+
+      async function checkBackendStatus() {
+        const statusEl = document.getElementById("status");
+        try {
+          const response = await fetch(`${API_URL}/api/health`);
+          const data = await response.json();
+
+          if (data.status === "OK") {
+            statusEl.className = "status online";
+            statusEl.textContent = "✅ Backend is ONLINE on port 5000";
+          } else {
+            statusEl.className = "status offline";
+            statusEl.textContent = "❌ Backend responded but status is not OK";
+          }
+        } catch (error) {
+          statusEl.className = "status offline";
+          statusEl.textContent =
+            "❌ Backend is OFFLINE (make sure it's running on port 5000)";
+        }
+      }
+
+      async function testHealthCheck() {
+        const resultEl = document.getElementById("result");
+        resultEl.innerHTML =
+          '<div class="result info">Testing health check endpoint...</div>';
+
+        try {
+          const response = await fetch(`${API_URL}/api/health`);
+          const data = await response.json();
+
+          resultEl.innerHTML = `
+                    <div class="result success">
+                        ✅ Health Check Success!
+                        
+                        Status: ${response.status}
+                        Response: ${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+        } catch (error) {
+          resultEl.innerHTML = `
+                    <div class="result error">
+                        ❌ Health Check Failed!
+                        
+                        Error: ${error.message}
+                        
+                        Make sure the backend is running:
+                        cd backend
+                        npm run dev
+                    </div>
+                `;
+        }
+      }
+
+      async function testCORS() {
+        const resultEl = document.getElementById("result");
+        resultEl.innerHTML = '<div class="result info">Testing CORS...</div>';
+
+        try {
+          const response = await fetch(`${API_URL}/api/health`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const corsHeaders = {
+            "Access-Control-Allow-Origin": response.headers.get(
+              "Access-Control-Allow-Origin"
+            ),
+            "Access-Control-Allow-Methods": response.headers.get(
+              "Access-Control-Allow-Methods"
+            ),
+          };
+
+          resultEl.innerHTML = `
+                    <div class="result success">
+                        ✅ CORS is Configured!
+                        
+                        Headers:
+                        ${JSON.stringify(corsHeaders, null, 2)}
+                    </div>
+                `;
+        } catch (error) {
+          resultEl.innerHTML = `
+                    <div class="result error">
+                        ❌ CORS Test Failed!
+                        
+                        Error: ${error.message}
+                        
+                        Make sure CORS is enabled in backend/src/app.js:
+                        app.use(cors());
+                    </div>
+                `;
+        }
+      }
+
+      async function testAllEndpoints() {
+        const resultEl = document.getElementById("result");
+        resultEl.innerHTML =
+          '<div class="result info">Testing all endpoints...</div>';
+
+        const tests = [];
+
+        // Test 1: Health Check
+        try {
+          const response = await fetch(`${API_URL}/api/health`);
+          const data = await response.json();
+          tests.push({
+            name: "Health Check",
+            status: response.ok ? "PASS" : "FAIL",
+            url: "/api/health",
+            response: data,
+          });
+        } catch (error) {
+          tests.push({
+            name: "Health Check",
+            status: "FAIL",
+            url: "/api/health",
+            error: error.message,
+          });
+        }
+
+        // Test 2: Documents endpoint (GET)
+        try {
+          const response = await fetch(`${API_URL}/api/documents`);
+          tests.push({
+            name: "Get Documents",
+            status: response.ok ? "PASS" : "FAIL",
+            url: "/api/documents",
+            statusCode: response.status,
+          });
+        } catch (error) {
+          tests.push({
+            name: "Get Documents",
+            status: "FAIL",
+            url: "/api/documents",
+            error: error.message,
+          });
+        }
+
+        let html = '<div class="result success">';
+        tests.forEach((test) => {
+          const icon = test.status === "PASS" ? "✅" : "❌";
+          html += `
+                    ${icon} ${test.name}: ${test.status}
+                    URL: ${test.url}
+                    ${test.statusCode ? "Status Code: " + test.statusCode : ""}
+                    ${
+                      test.response
+                        ? "Response: " + JSON.stringify(test.response)
+                        : ""
+                    }
+                    ${test.error ? "Error: " + test.error : ""}
+                    
+                `;
+        });
+        html += "</div>";
+
+        resultEl.innerHTML = html;
+      }
+    </script>
+  </body>
+</html>
